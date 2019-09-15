@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace Himbeer\LibSkinExample\Commands;
 
-use Himbeer\LibSkin\LibSkin;
+use Exception;
+use Himbeer\LibSkin\SkinConverter;
+use Himbeer\LibSkin\SkinGatherer;
 use pocketmine\command\CommandSender;
 use pocketmine\command\PluginCommand;
 use pocketmine\command\PluginIdentifiableCommand;
@@ -17,6 +19,11 @@ class PngSkinCommand extends PluginCommand implements PluginIdentifiableCommand 
 
 	public function __construct(Plugin $owner) {
 		parent::__construct("pngskin", $owner);
+	}
+
+	private static function changeSkin(Player $player, string $skinData) {
+		$player->setSkin(new Skin($player->getSkin()->getSkinId(), $skinData));
+		$player->sendSkin();
 	}
 
 	public function execute(CommandSender $sender, string $commandLabel, array $args) {
@@ -39,11 +46,10 @@ class PngSkinCommand extends PluginCommand implements PluginIdentifiableCommand 
 		switch ($args[0]) {
 			case "load":
 				try {
-					$skinData = LibSkin::imageToSkinDataFromPngPath($this->getPlugin()->getDataFolder() . $fileName);
-					$player->setSkin(new Skin("steve", $skinData));
-					$player->sendSkin();
+					$skinData = SkinConverter::imageToSkinDataFromPngPath($this->getPlugin()->getDataFolder() . $fileName);
+					self::changeSkin($player, $skinData);
 					$sender->sendMessage("Skin changed successfully");
-				} catch (\Exception $exception) {
+				} catch (Exception $exception) {
 					$sender->sendMessage("Error while loading skin: " . $exception->getMessage());
 				}
 				break;
@@ -51,12 +57,20 @@ class PngSkinCommand extends PluginCommand implements PluginIdentifiableCommand 
 				$skinData = $player->getSkin()->getSkinData();
 				$savePath = $this->getPlugin()->getDataFolder() . $fileName;
 				try {
-					LibSkin::skinDataToImageSave($skinData, $savePath);
+					SkinConverter::skinDataToImageSave($skinData, $savePath);
 					$sender->sendMessage("Saved as " . $savePath);
-				} catch (\Exception $exception) {
+				} catch (Exception $exception) {
 					$sender->sendMessage("Error while saving skin: " . $exception->getMessage());
 				}
-
+				break;
+			case "steal":
+				$skinData = SkinGatherer::getSkinDataFromOfflinePlayer($fileName);
+				if ($skinData === null) {
+					$sender->sendMessage("Player not found or doesn't have a skin saved.");
+				} else {
+					self::changeSkin($player, $skinData);
+					$sender->sendMessage("Skin changed successfully");
+				}
 				break;
 			default:
 				return false;
