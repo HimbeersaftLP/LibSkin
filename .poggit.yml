@@ -1,0 +1,12 @@
+---
+projects:
+  LibSkin:
+    type: library
+    model: virion
+    path: LibSkin
+  LibSkinExample:
+    type: plugin
+    path: LibSkinExample
+    libs:
+      - /LibSkin
+...

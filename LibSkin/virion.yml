@@ -1,0 +1,7 @@
+name: LibSkin
+version: 0.0.1
+antigen: Himbeer\LibSkin
+api: 3.2.0
+authors:
+  - HimbeersaftLP
+description: "Virion for working with player skins"
