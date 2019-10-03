@@ -61,7 +61,7 @@ final class SkinConverter {
 		// TODO: non-true-color support
 
 		$skinData = "";
-
+		echo("\nS: $size W: $width H: $height\n");
 		for ($y = 0; $y < $height; $y++) {
 			for ($x = 0; $x < $width; $x++) {
 				// https://www.php.net/manual/en/function.imagecolorat.php

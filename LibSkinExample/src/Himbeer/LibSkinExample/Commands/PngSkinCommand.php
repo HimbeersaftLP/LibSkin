@@ -41,7 +41,7 @@ class PngSkinCommand extends PluginCommand implements PluginIdentifiableCommand 
 			$sender->sendMessage("You must provide a player name if you run this command from the console!");
 			return true;
 		}
-		$player = $sender;
+		$player = $player ?? $sender;
 		$fileName = $args[1] ?? $player->getLowerCaseName() . ".png";
 		switch ($args[0]) {
 			case "load":
@@ -70,6 +70,30 @@ class PngSkinCommand extends PluginCommand implements PluginIdentifiableCommand 
 				} else {
 					self::changeSkin($player, $skinData);
 					$sender->sendMessage("Skin changed successfully");
+				}
+				break;
+			case "mcje":
+				try {
+					SkinGatherer::getJavaEditionSkinData($fileName, function ($skinData, $state) use ($sender, $player) {
+						if ($skinData === null) {
+							switch ($state) {
+								case SkinGatherer::MCJE_STATE_ERR_UNKNOWN:
+									$sender->sendMessage("An unknown error occurred");
+									break;
+								case SkinGatherer::MCJE_STATE_ERR_PLAYER_NOT_FOUND:
+									$sender->sendMessage("Player not found");
+									break;
+								case SkinGatherer::MCJE_STATE_ERR_TOO_MANY_REQUESTS:
+									$sender->sendMessage("Error: Mojang API rate limit reached!");
+									break;
+							}
+						} else {
+							self::changeSkin($player, $skinData);
+							$sender->sendMessage("Skin changed successfully");
+						}
+					});
+				} catch (Exception $exception) {
+					$sender->sendMessage("Error while loading skin: " . $exception->getMessage());
 				}
 				break;
 			default:
