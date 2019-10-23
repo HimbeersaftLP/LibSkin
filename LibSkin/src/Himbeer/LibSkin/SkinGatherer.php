@@ -58,7 +58,6 @@ final class SkinGatherer {
 	 */
 	public static function getJavaEditionSkinUrl(string $userName, callable $callback) {
 		self::asyncHttpGetRequest("https://api.mojang.com/users/profiles/minecraft/{$userName}", function ($response) use ($callback) {
-			var_dump($response);;
 			$body = $response[0];
 			if ($body === "") {
 				if ($response[2] === 204) { // Status Code 204: No Content
@@ -74,7 +73,6 @@ final class SkinGatherer {
 				return;
 			}
 			self::asyncHttpGetRequest("https://sessionserver.mojang.com/session/minecraft/profile/{$data["id"]}", function ($response) use ($callback) {
-				var_dump($response);
 				$body = $response[0];
 				if ($body === "") {
 					$callback(null, self::MCJE_STATE_ERR_UNKNOWN);

@@ -52,7 +52,7 @@ final class SkinConverter {
 		if (!get_resource_type($image) === "gd") {
 			throw new Exception("1st parameter must be a GD image resource");
 		}
-		$size = imagesx($image) * imagesx($image) * 4;
+		$size = imagesx($image) * imagesy($image) * 4;
 		LibSkin::validateSize($size);
 
 		$width = LibSkin::SKIN_WIDTH_MAP[$size];
@@ -61,7 +61,6 @@ final class SkinConverter {
 		// TODO: non-true-color support
 
 		$skinData = "";
-		echo("\nS: $size W: $width H: $height\n");
 		for ($y = 0; $y < $height; $y++) {
 			for ($x = 0; $x < $width; $x++) {
 				// https://www.php.net/manual/en/function.imagecolorat.php

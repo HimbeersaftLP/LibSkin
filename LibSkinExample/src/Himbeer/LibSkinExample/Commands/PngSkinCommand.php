@@ -10,6 +10,7 @@ use Himbeer\LibSkin\SkinGatherer;
 use pocketmine\command\CommandSender;
 use pocketmine\command\PluginCommand;
 use pocketmine\command\PluginIdentifiableCommand;
+use pocketmine\command\utils\InvalidCommandSyntaxException;
 use pocketmine\entity\Skin;
 use pocketmine\Player;
 use pocketmine\plugin\Plugin;
@@ -19,6 +20,8 @@ class PngSkinCommand extends PluginCommand implements PluginIdentifiableCommand 
 
 	public function __construct(Plugin $owner) {
 		parent::__construct("pngskin", $owner);
+		$this->setUsage("/pngskin <load|save|steal|mcje> <skin source player> [skin destination player]");
+		$this->setDescription("Skin Utilities");
 	}
 
 	private static function changeSkin(Player $player, string $skinData) {
@@ -28,7 +31,7 @@ class PngSkinCommand extends PluginCommand implements PluginIdentifiableCommand 
 
 	public function execute(CommandSender $sender, string $commandLabel, array $args) {
 		if (count($args) < 1) {
-			return false;
+			throw new InvalidCommandSyntaxException();
 		}
 		if (isset($args[2])) {
 			$player = $this->getPlugin()->getServer()->getPlayer($args[2]);
@@ -97,7 +100,7 @@ class PngSkinCommand extends PluginCommand implements PluginIdentifiableCommand 
 				}
 				break;
 			default:
-				return false;
+				throw new InvalidCommandSyntaxException();
 		}
 		return true;
 	}
