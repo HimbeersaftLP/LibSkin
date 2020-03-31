@@ -15,12 +15,12 @@ use pocketmine\entity\Skin;
 use pocketmine\Player;
 use pocketmine\plugin\Plugin;
 
-class PngSkinCommand extends PluginCommand implements PluginIdentifiableCommand {
+class SkinCommand extends PluginCommand implements PluginIdentifiableCommand {
 
 
 	public function __construct(Plugin $owner) {
-		parent::__construct("pngskin", $owner);
-		$this->setUsage("/pngskin <load|save|steal|mcje> <skin source player> [skin destination player]");
+		parent::__construct("skin", $owner);
+		$this->setUsage("/skin <load|save|steal|mcje> <skin source player> [skin destination player]");
 		$this->setDescription("Skin Utilities");
 	}
 
