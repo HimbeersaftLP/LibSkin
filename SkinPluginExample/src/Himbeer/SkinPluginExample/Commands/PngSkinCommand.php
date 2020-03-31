@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Himbeer\LibSkinExample\Commands;
+namespace Himbeer\SkinPluginExample\Commands;
 
 use Exception;
 use Himbeer\LibSkin\SkinConverter;

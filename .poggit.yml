@@ -4,9 +4,9 @@ projects:
     type: library
     model: virion
     path: LibSkin
-  LibSkinExample:
+  SkinPluginExample:
     type: plugin
-    path: LibSkinExample
+    path: SkinPluginExample
     libs:
       - /LibSkin
 ...

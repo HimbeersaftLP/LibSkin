@@ -1,5 +1,5 @@
-name: LibSkinExample
-main: Himbeer\LibSkinExample\Main
+name: SkinPluginExample
+main: Himbeer\SkinPluginExample\Main
 version: 0.0.1
 api: 3.2.0
 author: Himbeer
