@@ -44,6 +44,9 @@ class PngSkinCommand extends PluginCommand implements PluginIdentifiableCommand 
 			$sender->sendMessage("You must provide a player name if you run this command from the console!");
 			return true;
 		}
+		/**
+		 * @var Player
+		 */
 		$player = $player ?? $sender;
 		$fileName = $args[1] ?? $player->getLowerCaseName() . ".png";
 		switch ($args[0]) {

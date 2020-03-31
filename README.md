@@ -1,8 +1,8 @@
 # LibSkin
 A [Virion](https://github.com/poggit/support/blob/master/virion.md) for working with player skins.
 
-![Poggit Build status for the virion](https://poggit.pmmp.io/ci.shield/HimbeersaftLP/LibSkin/~)
-![Poggit Build status for the example plugin](https://poggit.pmmp.io/ci.shield/HimbeersaftLP/LibSkin/LibSkinExample)
+[![Poggit Build status for the virion](https://poggit.pmmp.io/ci.shield/HimbeersaftLP/LibSkin/~)](https://poggit.pmmp.io/ci/HimbeersaftLP/LibSkin/LibSkin)
+[![Poggit Build status for the example plugin](https://poggit.pmmp.io/ci.shield/HimbeersaftLP/LibSkin/SkinPluginExample)](https://poggit.pmmp.io/ci/HimbeersaftLP/LibSkin/SkinPluginExample)
 
 See LibSkinExample for a usage example.
 
