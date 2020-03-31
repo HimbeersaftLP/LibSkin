@@ -79,6 +79,10 @@ class SkinCommand extends PluginCommand implements PluginIdentifiableCommand {
 				}
 				break;
 			case "mcje":
+				if (!isset($args[1])) {
+					$sender->sendMessage("You must provide a player name!");
+					return true;
+				}
 				try {
 					SkinGatherer::getJavaEditionSkinData($fileName, function ($skinData, $state) use ($sender, $player) {
 						if ($skinData === null) {
