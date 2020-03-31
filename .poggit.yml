@@ -8,5 +8,5 @@ projects:
     type: plugin
     path: SkinPluginExample
     libs:
-      - /LibSkin
+      - src: /LibSkin
 ...
