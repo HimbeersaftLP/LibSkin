@@ -58,7 +58,7 @@ final class SkinConverter {
 		$width = LibSkin::SKIN_WIDTH_MAP[$size];
 		$height = LibSkin::SKIN_HEIGHT_MAP[$size];
 
-		// TODO: non-true-color support
+		imagepalettetotruecolor($image);
 
 		$skinData = "";
 		for ($y = 0; $y < $height; $y++) {
