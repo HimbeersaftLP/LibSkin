@@ -32,7 +32,7 @@ final class SkinConverter {
 				$skinPos++;
 				$b = ord($skinData[$skinPos]);
 				$skinPos++;
-				$a = 127 - intdiv(ord($skinData[$skinPos]), 2);
+				$a = ((~ord($skinData[$skinPos])) & 0xff) >> 1;
 				$skinPos++;
 				$col = imagecolorallocatealpha($image, $r, $g, $b, $a);
 				imagesetpixel($image, $x, $y, $col);
@@ -65,11 +65,11 @@ final class SkinConverter {
 			for ($x = 0; $x < $width; $x++) {
 				// https://www.php.net/manual/en/function.imagecolorat.php
 				$rgba = imagecolorat($image, $x, $y);
-				$a = (127 - (($rgba >> 24) & 0x7F)) * 2;
+				$a = (~(($rgba >> 24) & 0xff)) & 0xff;
 				$r = ($rgba >> 16) & 0xff;
 				$g = ($rgba >> 8) & 0xff;
 				$b = $rgba & 0xff;
-				$skinData .= chr($r) . chr($g) . chr($b) . chr($a);
+				$skinData .= chr($r) . chr($g) . chr($b) . chr(($a << 1) | ($a >> 6));
 			}
 		}
 		if ($destroyImage) imagedestroy($image);
