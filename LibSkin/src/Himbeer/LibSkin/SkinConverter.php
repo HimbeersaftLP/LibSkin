@@ -65,11 +65,11 @@ final class SkinConverter {
 			for ($x = 0; $x < $width; $x++) {
 				// https://www.php.net/manual/en/function.imagecolorat.php
 				$rgba = imagecolorat($image, $x, $y);
-				$a = (~(($rgba >> 24) & 0xff)) & 0xff;
+				$a = ($rgba >> 24) & 0xff;
 				$r = ($rgba >> 16) & 0xff;
 				$g = ($rgba >> 8) & 0xff;
 				$b = $rgba & 0xff;
-				$skinData .= chr($r) . chr($g) . chr($b) . chr(($a << 1) | ($a >> 6));
+				$skinData .= chr($r) . chr($g) . chr($b) . chr(~(($a << 1) | ($a >> 6)) & 0xff);
 			}
 		}
 		if ($destroyImage) imagedestroy($image);
