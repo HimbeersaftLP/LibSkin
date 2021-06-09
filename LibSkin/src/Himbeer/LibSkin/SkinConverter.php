@@ -58,18 +58,18 @@ final class SkinConverter {
 		$width = LibSkin::SKIN_WIDTH_MAP[$size];
 		$height = LibSkin::SKIN_HEIGHT_MAP[$size];
 
-		// TODO: non-true-color support
+		imagepalettetotruecolor($image);
 
 		$skinData = "";
 		for ($y = 0; $y < $height; $y++) {
 			for ($x = 0; $x < $width; $x++) {
 				// https://www.php.net/manual/en/function.imagecolorat.php
 				$rgba = imagecolorat($image, $x, $y);
-				$a = (127 - (($rgba >> 24) & 0x7F)) * 2;
+				$a = ($rgba >> 24) & 0xff;
 				$r = ($rgba >> 16) & 0xff;
 				$g = ($rgba >> 8) & 0xff;
 				$b = $rgba & 0xff;
-				$skinData .= chr($r) . chr($g) . chr($b) . chr($a);
+				$skinData .= chr($r) . chr($g) . chr($b) . chr(~(($a << 1) | ($a >> 6)) & 0xff);
 			}
 		}
 		if ($destroyImage) imagedestroy($image);
