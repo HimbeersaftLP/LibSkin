@@ -32,7 +32,7 @@ final class SkinConverter {
 				$skinPos++;
 				$b = ord($skinData[$skinPos]);
 				$skinPos++;
-				$a = ((~ord($skinData[$skinPos])) & 0xff) >> 1;
+				$a = 127 - intdiv(ord($skinData[$skinPos]), 2);
 				$skinPos++;
 				$col = imagecolorallocatealpha($image, $r, $g, $b, $a);
 				imagesetpixel($image, $x, $y, $col);
