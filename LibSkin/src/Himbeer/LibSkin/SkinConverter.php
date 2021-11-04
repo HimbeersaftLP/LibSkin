@@ -49,7 +49,7 @@ final class SkinConverter {
 	 * @throws Exception
 	 */
 	public static function imageToSkinData($image, bool $destroyImage): string {
-		if (get_resource_type($image) !== "gd") {
+		if (get_class($image) !== "GdImage") {
 			throw new Exception("1st parameter must be a GD image resource");
 		}
 		$size = imagesx($image) * imagesy($image) * 4;
