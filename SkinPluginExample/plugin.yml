@@ -1,7 +1,7 @@
 name: SkinPluginExample
 main: Himbeer\SkinPluginExample\Main
-version: 1.0.1
-api: 3.24.0
+version: 2.0.0
+api: 4.0.0
 author: Himbeer
 website: himbeer.me
 description: Example plugin for LibSkin

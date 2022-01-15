@@ -6,8 +6,10 @@ namespace Himbeer\LibSkin;
 
 use Exception;
 use pocketmine\scheduler\BulkCurlTask;
+use pocketmine\scheduler\BulkCurlTaskOperation;
 use pocketmine\Server;
 use pocketmine\utils\InternetException;
+use pocketmine\utils\InternetRequestResult;
 
 final class SkinGatherer {
 	public const MCJE_STATE_SUCCESS = 0;
@@ -34,21 +36,21 @@ final class SkinGatherer {
 	 * @param callable $callback
 	 */
 	private static function asyncHttpGetRequest(string $url, callable $callback) {
-		$task = new class([[
-			"page" => $url
-		]], $callback) extends BulkCurlTask {
-			public function __construct(array $operations, $callback) {
-				parent::__construct($operations, $callback);
-			}
-			public function onCompletion(Server $server) {
-				/** @var callable $callback */
-				$callback = $this->fetchLocal();
-				if (isset($this->getResult()[0]) && !$this->getResult()[0] instanceof InternetException) {
-					$response = $this->getResult()[0];
-					$callback($response);
-				}
+		/**
+		 * @param InternetRequestResult[] $results
+		 *
+		 * @return void
+		 */
+		$bulkCurlTaskCallback = function(array $results) use ($callback) {
+			if (isset($results[0]) && !$results[0] instanceof InternetException) {
+				$callback($results[0]);
+			} else {
+				$callback(null);
 			}
 		};
+		$task = new BulkCurlTask([
+			new BulkCurlTaskOperation($url)
+		], $bulkCurlTaskCallback);
 		Server::getInstance()->getAsyncPool()->submitTask($task);
 	}
 
@@ -57,10 +59,14 @@ final class SkinGatherer {
 	 * @param callable $callback A function which gets called when the request is finished, with the first argument being the URL (or null) and the second the success/error state
 	 */
 	public static function getJavaEditionSkinUrl(string $userName, callable $callback) {
-		self::asyncHttpGetRequest("https://api.mojang.com/users/profiles/minecraft/{$userName}", function ($response) use ($callback) {
-			$body = $response[0];
+		self::asyncHttpGetRequest("https://api.mojang.com/users/profiles/minecraft/{$userName}", function (InternetRequestResult|null $response) use ($callback) {
+			if ($response === null) {
+				$callback(null, self::MCJE_STATE_ERR_UNKNOWN);
+				return;
+			}
+			$body = $response->getBody();
 			if ($body === "") {
-				if ($response[2] === 204) { // Status Code 204: No Content
+				if ($response->getCode() === 204) { // Status Code 204: No Content
 					$callback(null, self::MCJE_STATE_ERR_PLAYER_NOT_FOUND);
 				}  else {
 					$callback(null, self::MCJE_STATE_ERR_UNKNOWN);
@@ -72,8 +78,12 @@ final class SkinGatherer {
 				$callback(null, self::MCJE_STATE_ERR_UNKNOWN);
 				return;
 			}
-			self::asyncHttpGetRequest("https://sessionserver.mojang.com/session/minecraft/profile/{$data["id"]}", function ($response) use ($callback) {
-				$body = $response[0];
+			self::asyncHttpGetRequest("https://sessionserver.mojang.com/session/minecraft/profile/{$data["id"]}", function (InternetRequestResult|null $response) use ($callback) {
+				if ($response === null) {
+					$callback(null, self::MCJE_STATE_ERR_UNKNOWN);
+					return;
+				}
+				$body = $response->getBody();
 				if ($body === "") {
 					$callback(null, self::MCJE_STATE_ERR_UNKNOWN);
 					return;

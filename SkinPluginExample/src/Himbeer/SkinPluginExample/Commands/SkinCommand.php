@@ -7,21 +7,21 @@ namespace Himbeer\SkinPluginExample\Commands;
 use Exception;
 use Himbeer\LibSkin\SkinConverter;
 use Himbeer\LibSkin\SkinGatherer;
+use Himbeer\SkinPluginExample\Main;
+use pocketmine\command\Command;
 use pocketmine\command\CommandSender;
-use pocketmine\command\PluginCommand;
-use pocketmine\command\PluginIdentifiableCommand;
 use pocketmine\command\utils\InvalidCommandSyntaxException;
 use pocketmine\entity\Skin;
-use pocketmine\Player;
+use pocketmine\player\Player;
 use pocketmine\plugin\Plugin;
+use pocketmine\plugin\PluginOwned;
 
-class SkinCommand extends PluginCommand implements PluginIdentifiableCommand {
+class SkinCommand extends Command implements PluginOwned {
+	private Main $owner;
 
-
-	public function __construct(Plugin $owner) {
-		parent::__construct("skin", $owner);
-		$this->setUsage("/skin <load|save|steal|mcje> <skin source player> [skin destination player]");
-		$this->setDescription("Skin Utilities");
+	public function __construct(Main $owner) {
+		parent::__construct("skin", "Skin Utilities", "/skin <load|save|steal|mcje> <skin source player> [skin destination player]");
+		$this->owner = $owner;
 	}
 
 	private static function changeSkin(Player $player, string $skinData) {
@@ -34,7 +34,7 @@ class SkinCommand extends PluginCommand implements PluginIdentifiableCommand {
 			throw new InvalidCommandSyntaxException();
 		}
 		if (isset($args[2])) {
-			$player = $this->getPlugin()->getServer()->getPlayer($args[2]);
+			$player = $this->getOwningPlugin()->getServer()->getPlayer($args[2]);
 			if ($player === null) {
 				$sender->sendMessage("Player not found!");
 				return true;
@@ -48,11 +48,11 @@ class SkinCommand extends PluginCommand implements PluginIdentifiableCommand {
 		 * @var Player
 		 */
 		$player = $player ?? $sender;
-		$fileName = $args[1] ?? $player->getLowerCaseName() . ".png";
+		$fileName = $args[1] ?? strtolower($player->getName()) . ".png";
 		switch ($args[0]) {
 			case "load":
 				try {
-					$skinData = SkinConverter::imageToSkinDataFromPngPath($this->getPlugin()->getDataFolder() . $fileName);
+					$skinData = SkinConverter::imageToSkinDataFromPngPath($this->getOwningPlugin()->getDataFolder() . $fileName);
 					self::changeSkin($player, $skinData);
 					$sender->sendMessage("Skin changed successfully");
 				} catch (Exception $exception) {
@@ -61,7 +61,7 @@ class SkinCommand extends PluginCommand implements PluginIdentifiableCommand {
 				break;
 			case "save":
 				$skinData = $player->getSkin()->getSkinData();
-				$savePath = $this->getPlugin()->getDataFolder() . $fileName;
+				$savePath = $this->getOwningPlugin()->getDataFolder() . $fileName;
 				try {
 					SkinConverter::skinDataToImageSave($skinData, $savePath);
 					$sender->sendMessage("Saved as " . $savePath);
@@ -110,5 +110,9 @@ class SkinCommand extends PluginCommand implements PluginIdentifiableCommand {
 				throw new InvalidCommandSyntaxException();
 		}
 		return true;
+	}
+
+	public function getOwningPlugin() : Plugin{
+		return $this->owner;
 	}
 }
