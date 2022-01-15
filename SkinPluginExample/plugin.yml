@@ -1,7 +1,37 @@
-name: SkinPluginExample
-main: Himbeer\SkinPluginExample\Main
-version: 2.0.0
+---
+name: SkinThief
+version: 1.0.0
+main: Himbeer\SkinThief\Main
 api: 4.0.0
 author: Himbeer
 website: himbeer.me
-description: Example plugin for LibSkin
+description: "Steal other player's skins"
+
+permissions:
+  skinthief.command:
+    description: Allow access to the "/skin" base command (subcommands need seperate permissions!)
+    default: op
+
+  skinthief.command.all:
+    description: Allow access to all "/skin" subcommands
+    default: op
+  skinthief.command.load:
+    description: Allow access to "/skin load"
+    default: op
+  skinthief.command.save:
+    description: Allow access to "/skin save"
+    default: op
+  skinthief.command.steal:
+    description: Allow access to "/skin steal"
+    default: op
+  skinthief.command.mcje:
+    description: Allow access to "/skin mcje"
+    default: op
+
+  skinthief.otherplayer:
+    description: Allow changing another player's skin
+    default: op
+  skinthief.anyfilename:
+    description: Allow picking any file name when saving or loading a skin (otherwise only the player's name is allowed)
+    default: op
+...

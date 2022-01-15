@@ -19,10 +19,14 @@ final class SkinGatherer {
 
 	/**
 	 * @param string $playerName
+	 *
 	 * @return string|null Minecraft Skin Data or null if the player doesn't exist or doesn't have saved skin data
 	 */
-	public static function getSkinDataFromOfflinePlayer(string $playerName): ?string {
+	public static function getSkinDataFromOfflinePlayer(string $playerName) : ?string {
 		$namedTag = Server::getInstance()->getOfflinePlayerData($playerName);
+		if ($namedTag === null) {
+			return null;
+		}
 		$skinTag = $namedTag->getCompoundTag("Skin");
 		if ($skinTag === null) {
 			return null;
@@ -32,34 +36,23 @@ final class SkinGatherer {
 	}
 
 	/**
-	 * @param string $url
-	 * @param callable $callback
+	 * @param string   $userName
+	 * @param callable $callback A function which gets called when the request is finished, with the first argument being the skin data (or null) and the second the success/error state
+	 *
+	 * @throws Exception
 	 */
-	private static function asyncHttpGetRequest(string $url, callable $callback) {
-		/**
-		 * @param InternetRequestResult[] $results
-		 *
-		 * @return void
-		 */
-		$bulkCurlTaskCallback = function(array $results) use ($callback) {
-			if (isset($results[0]) && !$results[0] instanceof InternetException) {
-				$callback($results[0]);
-			} else {
-				$callback(null);
-			}
-		};
-		$task = new BulkCurlTask([
-			new BulkCurlTaskOperation($url)
-		], $bulkCurlTaskCallback);
-		Server::getInstance()->getAsyncPool()->submitTask($task);
+	public static function getJavaEditionSkinData(string $userName, callable $callback) {
+		self::getJavaEditionSkinUrl($userName, function($skinUrl, $state) use ($callback) {
+			$callback($skinUrl === null ? null : SkinConverter::imageToSkinDataFromPngPath($skinUrl), $state);
+		});
 	}
 
 	/**
-	 * @param string $userName Java Edition player name
+	 * @param string   $userName Java Edition player name
 	 * @param callable $callback A function which gets called when the request is finished, with the first argument being the URL (or null) and the second the success/error state
 	 */
 	public static function getJavaEditionSkinUrl(string $userName, callable $callback) {
-		self::asyncHttpGetRequest("https://api.mojang.com/users/profiles/minecraft/{$userName}", function (InternetRequestResult|null $response) use ($callback) {
+		self::asyncHttpGetRequest("https://api.mojang.com/users/profiles/minecraft/{$userName}", function(InternetRequestResult|null $response) use ($callback) {
 			if ($response === null) {
 				$callback(null, self::MCJE_STATE_ERR_UNKNOWN);
 				return;
@@ -68,7 +61,7 @@ final class SkinGatherer {
 			if ($body === "") {
 				if ($response->getCode() === 204) { // Status Code 204: No Content
 					$callback(null, self::MCJE_STATE_ERR_PLAYER_NOT_FOUND);
-				}  else {
+				} else {
 					$callback(null, self::MCJE_STATE_ERR_UNKNOWN);
 				}
 				return;
@@ -78,7 +71,7 @@ final class SkinGatherer {
 				$callback(null, self::MCJE_STATE_ERR_UNKNOWN);
 				return;
 			}
-			self::asyncHttpGetRequest("https://sessionserver.mojang.com/session/minecraft/profile/{$data["id"]}", function (InternetRequestResult|null $response) use ($callback) {
+			self::asyncHttpGetRequest("https://sessionserver.mojang.com/session/minecraft/profile/{$data["id"]}", function(InternetRequestResult|null $response) use ($callback) {
 				if ($response === null) {
 					$callback(null, self::MCJE_STATE_ERR_UNKNOWN);
 					return;
@@ -111,13 +104,25 @@ final class SkinGatherer {
 	}
 
 	/**
-	 * @param string $userName
-	 * @param callable $callback A function which gets called when the request is finished, with the first argument being the skin data (or null) and the second the success/error state
-	 * @throws Exception
+	 * @param string   $url
+	 * @param callable $callback
 	 */
-	public static function getJavaEditionSkinData(string $userName, callable $callback) {
-		self::getJavaEditionSkinUrl($userName, function ($skinUrl, $state) use ($callback) {
-			$callback($skinUrl === null ? null : SkinConverter::imageToSkinDataFromPngPath($skinUrl), $state);
-		});
+	private static function asyncHttpGetRequest(string $url, callable $callback) {
+		/**
+		 * @param InternetRequestResult[] $results
+		 *
+		 * @return void
+		 */
+		$bulkCurlTaskCallback = function(array $results) use ($callback) {
+			if (isset($results[0]) && !$results[0] instanceof InternetException) {
+				$callback($results[0]);
+			} else {
+				$callback(null);
+			}
+		};
+		$task = new BulkCurlTask([
+			new BulkCurlTaskOperation($url)
+		], $bulkCurlTaskCallback);
+		Server::getInstance()->getAsyncPool()->submitTask($task);
 	}
 }

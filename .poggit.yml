@@ -4,7 +4,7 @@ projects:
     type: library
     model: virion
     path: LibSkin
-  SkinPluginExample:
+  SkinThief:
     type: plugin
     path: SkinPluginExample
     libs:

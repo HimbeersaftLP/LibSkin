@@ -8,7 +8,20 @@ use Exception;
 
 final class SkinConverter {
 	/**
+	 * @param string $skinData Minecraft Skin Data
+	 * @param string $savePath Path where skin PNG is saved
+	 *
+	 * @throws Exception
+	 */
+	public static function skinDataToImageSave(string $skinData, string $savePath) {
+		$image = self::skinDataToImage($skinData);
+		imagepng($image, $savePath);
+		imagedestroy($image);
+	}
+
+	/**
 	 * @param string $skinData
+	 *
 	 * @return resource GD image resource
 	 * @throws Exception
 	 */
@@ -43,12 +56,27 @@ final class SkinConverter {
 	}
 
 	/**
-	 * @param resource $image GD image resource
-	 * @param bool $destroyImage Whether to call imagedestroy on the image resource after finishing
+	 * @param string $imagePath Path to skin PNG
+	 *
 	 * @return string Minecraft Skin Data
 	 * @throws Exception
 	 */
-	public static function imageToSkinData($image, bool $destroyImage): string {
+	public static function imageToSkinDataFromPngPath(string $imagePath) : string {
+		$image = imagecreatefrompng($imagePath);
+		if ($image === false) {
+			throw new Exception("Couldn't load image");
+		}
+		return self::imageToSkinData($image, true);
+	}
+
+	/**
+	 * @param resource $image GD image resource
+	 * @param bool     $destroyImage Whether to call imagedestroy on the image resource after finishing
+	 *
+	 * @return string Minecraft Skin Data
+	 * @throws Exception
+	 */
+	public static function imageToSkinData($image, bool $destroyImage) : string {
 		if (get_class($image) !== "GdImage") {
 			throw new Exception("1st parameter must be a GD image resource");
 		}
@@ -74,29 +102,5 @@ final class SkinConverter {
 		}
 		if ($destroyImage) imagedestroy($image);
 		return $skinData;
-	}
-
-	/**
-	 * @param string $skinData Minecraft Skin Data
-	 * @param string $savePath Path where skin PNG is saved
-	 * @throws Exception
-	 */
-	public static function skinDataToImageSave(string $skinData, string $savePath) {
-		$image = self::skinDataToImage($skinData);
-		imagepng($image, $savePath);
-		imagedestroy($image);
-	}
-
-	/**
-	 * @param string $imagePath Path to skin PNG
-	 * @return string Minecraft Skin Data
-	 * @throws Exception
-	 */
-	public static function imageToSkinDataFromPngPath(string $imagePath): string {
-		$image = imagecreatefrompng($imagePath);
-		if ($image === false) {
-			throw new Exception("Couldn't load image");
-		}
-		return self::imageToSkinData($image, true);
 	}
 }
