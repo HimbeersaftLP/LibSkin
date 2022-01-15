@@ -34,7 +34,7 @@ class SkinCommand extends Command implements PluginOwned {
 			throw new InvalidCommandSyntaxException();
 		}
 		if (isset($args[2])) {
-			$player = $this->getOwningPlugin()->getServer()->getPlayer($args[2]);
+			$player = $this->getOwningPlugin()->getServer()->getPlayerByPrefix($args[2]);
 			if ($player === null) {
 				$sender->sendMessage("Player not found!");
 				return true;
@@ -112,7 +112,7 @@ class SkinCommand extends Command implements PluginOwned {
 		return true;
 	}
 
-	public function getOwningPlugin() : Plugin{
+	public function getOwningPlugin() : Main{
 		return $this->owner;
 	}
 }
