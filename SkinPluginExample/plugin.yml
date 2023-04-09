@@ -1,6 +1,6 @@
 ---
 name: SkinThief
-version: 1.0.0
+version: 2.0.0
 main: Himbeer\SkinThief\Main
 api: 4.0.0
 author: Himbeer
@@ -33,5 +33,8 @@ permissions:
     default: op
   skinthief.anyfilename:
     description: Allow picking any file name when saving or loading a skin (otherwise only the player's name is allowed)
+    default: op
+  skinthief.metadata:
+    description: Allow loading and saving skin metadata (such as geometry) as well.
     default: op
 ...

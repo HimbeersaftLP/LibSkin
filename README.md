@@ -8,7 +8,7 @@ See LibSkinExample for a usage example.
 
 ## Features:
 
-- Convert skin data to PNG
+- Convert skin data to PNG (and metadata, if allowed, to JSON)
 - Convert PNG to skin data
 - Asynchronously Download skins of Minecraft: Java Edition players
 
@@ -32,10 +32,10 @@ See LibSkinExample for a usage example.
 The command of this plugin is `/skin`. It has the following subcommands:
 
 - `/skin load [file name] [target player]`
-    - Description: Load skin from a png file in `plugin_data/SkinThief/skins`
+    - Description: Load skin from a png file and metadata from a json file in `plugin_data/SkinThief/skins`
     - Note: If no file name is given, the player's name is used
 - `/skin save [file name] [target player]`
-    - Description: Save skin to a png file in `plugin_data/SkinThief/skins`
+    - Description: Save skin to a png file and metadata to a json file in `plugin_data/SkinThief/skins`
     - Note: If no file name is given, the player's name is used
 - `/skin steal <player to steal from> [target player]`
     - Description: Steal the skin of another player (online or offline)
@@ -68,6 +68,9 @@ The command of this plugin is `/skin`. It has the following subcommands:
 - `skinthief.anyfilename`
     - Description: Allow picking any file name when saving or loading a skin (otherwise only the player's name is
       allowed)
+    - Default: op
+- `skinthief.metadata`
+    - Description: Allow loading and saving skin metadata (such as geometry) as well.
     - Default: op
 
 ## Additional Information

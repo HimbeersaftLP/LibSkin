@@ -76,9 +76,12 @@ class SkinCommand extends Command implements PluginOwned {
 				$sender->sendMessage(TextFormat::RED . "You don't have the permission to choose a file name!");
 				return true;
 			}
-			$fileName = $args[1] ?? strtolower($player->getName());
-			$fileName = $this->getOwningPlugin()->escapeFileName($fileName) . ".png";
-			$fullPath = $this->getOwningPlugin()->getSkinStorageLocation($fileName);
+			$baseFileName = $args[1] ?? strtolower($player->getName());
+			$baseFileName = $this->getOwningPlugin()->escapeFileName($baseFileName);
+			$imageFileName = $baseFileName . ".png";
+			$geoFileName = $baseFileName . ".json";
+			$fullImagePath = $this->getOwningPlugin()->getSkinStorageLocation($imageFileName);
+			$fullGeoPath = $this->getOwningPlugin()->getSkinStorageLocation($geoFileName);
 		}
 
 		// Ensure player name is provided for steal and mcje subcommands
@@ -94,12 +97,17 @@ class SkinCommand extends Command implements PluginOwned {
 		switch ($subCommand) {
 			case "load":
 				try {
-					if (is_file($fullPath)) {
-						$skinData = SkinConverter::imageToSkinDataFromPngPath($fullPath);
-						self::changeSkin($player, $skinData);
-						$sender->sendMessage("Skin loaded from file successfully!");
+					if (is_file($fullImagePath)) {
+						$skinData = SkinConverter::imageToSkinDataFromPngPath($fullImagePath);
+						if ($sender->hasPermission("skinthief.metadata") && is_file($fullGeoPath)) {
+							self::changeSkinAndGeo($player, $skinData, $fullGeoPath);
+							$sender->sendMessage("Skin and geometry loaded from file successfully!");
+						} else {
+							self::changeSkin($player, $skinData);
+							$sender->sendMessage("Skin loaded from file successfully!");
+						}
 					} else {
-						$sender->sendMessage(TextFormat::RED . "File \"$fileName\" not found!");
+						$sender->sendMessage(TextFormat::RED . "File \"$imageFileName\" not found!");
 					}
 				} catch (Exception $exception) {
 					$sender->sendMessage(TextFormat::RED . "An unknown error occurred!");
@@ -109,8 +117,13 @@ class SkinCommand extends Command implements PluginOwned {
 			case "save":
 				$skinData = $player->getSkin()->getSkinData();
 				try {
-					SkinConverter::skinDataToImageSave($skinData, $fullPath);
-					$sender->sendMessage("Skin saved successfully as \"$fileName\"!");
+					SkinConverter::skinDataToImageSave($skinData, $fullImagePath);
+					if ($sender->hasPermission("skinthief.metadata")) {
+						self::skinMetaDataToJsonSave($player->getSkin()->getSkinId(), $player->getSkin()->getGeometryName(), $player->getSkin()->getGeometryData(), $fullGeoPath);
+						$sender->sendMessage("Skin and geometry saved successfully as \"$imageFileName\" and \"$geoFileName\"!");
+					} else {
+						$sender->sendMessage("Skin saved successfully as \"$imageFileName\"!");
+					}
 				} catch (Exception $exception) {
 					$sender->sendMessage(TextFormat::RED . "An unknown error occurred!");
 					$this->getOwningPlugin()->getLogger()->notice("An exception occurred while trying to save a skin: " . $exception->getMessage());
@@ -166,5 +179,55 @@ class SkinCommand extends Command implements PluginOwned {
 	private static function changeSkin(Player $player, string $skinData) : void {
 		$player->setSkin(new Skin($player->getSkin()->getSkinId(), $skinData));
 		$player->sendSkin();
+	}
+
+	private static function changeSkinAndGeo(Player $player, string $skinData, string $fullGeoPath) : void {
+		$player->setSkin(self::skinMetaDataFromJsonFile($fullGeoPath, $skinData));
+		$player->sendSkin();
+	}
+
+	/**
+	 * @param string $skinId Skin ID (e.g. CustomSlim<UUID>)
+	 * @param string $geometryName Skin geometry name (e.g. geometry.humanoid.customSlim)
+	 * @param string $geometryData Skin geometry data as JSON string
+	 * @param string $savePath Path where skin PNG is saved
+	 *
+	 * @returns void
+	 * @throws Exception
+	 */
+	public static function skinMetaDataToJsonSave(string $skinId, string $geometryName, string $geometryData, string $savePath) : void {
+		$jsonData = json_encode([
+			"skinId" => $skinId,
+			"geometryName" => $geometryName,
+			"geometryData" => $geometryData
+		]);
+		if ($jsonData === false) {
+			throw new Exception("JSON encoding failed!");
+		}
+		if (file_put_contents($savePath, $jsonData) === false) {
+			throw new Exception("Saving JSON file failed!");
+		}
+	}
+
+	/**
+	 * @param string $savePath Path where skin PNG is saved
+	 * @param string $skinData Data of the skin that will be returned
+	 *
+	 * @return Skin Skin with the given skin data and the loaded metadata
+	 * @throws Exception
+	 */
+	public static function skinMetaDataFromJsonFile(string $savePath, string $skinData) : Skin {
+		$jsonData = file_get_contents($savePath);
+		if ($jsonData === false) {
+			throw new Exception("Reading file failed!");
+		}
+		$parsedData = json_decode($jsonData, true);
+		if ($parsedData === null) {
+			throw new Exception("JSON decoding failed!");
+		}
+		$skinId = $parsedData["skinId"];
+		$geometryName = $parsedData["geometryName"];
+		$geometryData = $parsedData["geometryData"];
+		return new Skin($skinId, $skinData, "", $geometryName, $geometryData);
 	}
 }
