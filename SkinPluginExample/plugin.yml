@@ -1,8 +1,10 @@
 ---
 name: SkinThief
-version: 2.0.0
+version: 2.0.1
 main: Himbeer\SkinThief\Main
-api: 4.0.0
+api:
+  - 4.0.0
+  - 5.0.0
 author: Himbeer
 website: himbeer.me
 description: "Steal other player's skins"
