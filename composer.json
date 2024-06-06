@@ -9,5 +9,14 @@
         {
             "name": "HimbeersaftLP, oPinqzz"
         }
-    ]
+    ],
+    "autoload": {
+        "classmap": ["src"]
+    },
+    "extra": {
+        "virion": {
+            "spec": "3.0",
+            "namespace-root": "Himbeer\\LibSkin"
+        }
+    }
 }
