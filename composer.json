@@ -10,6 +10,7 @@
             "name": "HimbeersaftLP, oPinqzz"
         }
     ],
+    "minimum-stability": "stable",
     "autoload": {
         "classmap": ["src"]
     },
