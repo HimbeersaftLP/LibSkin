@@ -1,5 +1,9 @@
 name: LibSkin
-author: Himbeer
+version: 2.0.1
 antigen: Himbeer\LibSkin
-api: [ 5.0.0 ]
-version: 1.0.0
+api:
+  - 4.0.0
+  - 5.0.0
+authors:
+  - Himbeer
+description: "Virion for working with player skins"
