@@ -1,0 +1,5 @@
+name: LibSkin
+author: Himbeer
+antigen: Himbeer\LibSkin
+api: [ 5.0.0 ]
+version: 1.0.0
