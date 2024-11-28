@@ -2,6 +2,9 @@
     "name": "opinqz/libskin_composer",
     "description": "Skin Management Library",
     "type": "library",
+    "require": {
+        "pocketmine/pocketmine-mp": "^5.0.0"
+    },
     "authors": [
         {
             "name": "HimbeersaftLP, oPinqzz"
