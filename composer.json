@@ -1,6 +1,7 @@
 {
     "name": "himbeer/libskin",
     "description": "PMMP virion for working with player skins",
+    "license": "LGPL-3.0-only",
     "type": "library",
     "require": {
         "pocketmine/pocketmine-mp": "^5.0.0"
