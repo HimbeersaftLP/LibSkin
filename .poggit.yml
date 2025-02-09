@@ -3,7 +3,7 @@ projects:
   LibSkin:
     type: library
     model: virion
-    path: LibSkin
+    path: src
   SkinThief:
     type: plugin
     path: SkinPluginExample
