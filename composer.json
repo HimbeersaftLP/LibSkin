@@ -1,13 +1,30 @@
 {
-    "name": "opinqz/libskin_composer",
-    "description": "Skin Management Library",
+    "name": "himbeer/libskin",
+    "description": "PMMP virion for working with player skins",
     "type": "library",
     "require": {
         "pocketmine/pocketmine-mp": "^5.0.0"
     },
     "authors": [
         {
-            "name": "HimbeersaftLP, oPinqzz"
+            "name": "Himbeer",
+            "homepage": "https://github.com/HimbeersaftLP",
+            "role": "Developer"
+        },
+        {
+            "name": "oPinqzz",
+            "homepage": "https://github.com/iAbdo2008",
+            "role": "Contributor"
+        },
+        {
+            "name": "rjworks",
+            "homepage": "https://github.com/rjworks",
+            "role": "Contributor"
+        },
+        {
+            "name": "BillBlackwood",
+            "homepage": "https://github.com/BillBlackwood",
+            "role": "Contributor"
         }
     ],
     "minimum-stability": "stable",
