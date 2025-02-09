@@ -3,6 +3,8 @@
 A [Virion](https://github.com/poggit/support/blob/master/virion.md) for working with player skins.
 
 [![Poggit Build status for the virion](https://poggit.pmmp.io/ci.shield/HimbeersaftLP/LibSkin/~)](https://poggit.pmmp.io/ci/HimbeersaftLP/LibSkin/LibSkin)
+[![Join the Discord Server](https://img.shields.io/discord/252874887113342976?logo=discord)](https://www.himbeer.me/discord)
+[![Packagist](https://img.shields.io/packagist/v/himbeer/libskin)](https://packagist.org/packages/himbeer/libskin)
 
 See LibSkinExample for a usage example.
 
@@ -16,6 +18,7 @@ See LibSkinExample for a usage example.
 
 [![Poggit Build status for the example plugin](https://poggit.pmmp.io/ci.shield/HimbeersaftLP/LibSkin/SkinThief)](https://poggit.pmmp.io/ci/HimbeersaftLP/LibSkin/SkinThief)
 [![Poggit Release status for the example plugin](https://poggit.pmmp.io/shield.state/SkinThief)](https://poggit.pmmp.io/p/SkinThief)
+[![Join the Discord Server](https://img.shields.io/discord/252874887113342976?logo=discord)](https://www.himbeer.me/discord)
 
 ## Description
 
